@@ -1,1 +1,8 @@
-<h2>Hello world! 這是 index</h2>
+<ul>
+	{{!-- 三花括 {{{}}} 可以解析 HTML 內容，而雙花括 {{}} 會把內容當成單純的字串。--}}
+	{{#each todos}}
+		<li>
+			{{this.name}}
+		</li>
+	{{/each}}
+</ul>
