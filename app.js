@@ -89,7 +89,13 @@ app.post('/todos/:id/edit', (req, res) => {
 		.catch(error => console.log(error))
 })
 
-
+app.post('/todos/:id/delete',(req, res) =>{
+	const id = req.params.id  //透過 req.params.id 取得網址上的識別碼，用來查詢使用者想刪除的 To-do。
+	return Todo.findById(id)  //使用 Todo.findById 查詢資料，資料庫查詢成功以後，會把資料放進 todo
+		.then(todo => todo.remove()) //用 todo.remove() 刪除這筆資料
+		.then(() => res.redirect('/')) //成功刪除以後，使用 redirect 重新呼叫首頁
+		.catch(error => console.log(error))
+})
 
 
 app.listen(port,() =>{
