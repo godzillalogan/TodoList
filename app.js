@@ -46,6 +46,15 @@ app.get('/todos/new',(req,res) =>{
 	return res.render('new')
 })
 
+app.get('/todos/:id',(req,res) => {
+	const id = req.params.id
+	return Todo.findById(id) //從資料庫查找出資料
+		.lean()   //把資料轉換成單純的JS物件
+		.then((todo) => res.render('detail', { todo }))  //把資料送給前端樣板
+		.catch(error => console.log(error))  //如果發生意外，執行錯誤處理
+})
+
+
 app.post('/todos',(req,res) => {
 	const name = req.body.name
 
