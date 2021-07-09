@@ -41,9 +41,24 @@ app.get('/',(req,res) => {
 		.then(todos => res.render('index', { todos }))  // 然後把資料送給前端樣板
 		.catch(error => console.error(error)) // 如果發生意外，執行錯誤處理
 })
-//叫 view 引擎去拿 new 樣板
+//new,叫 view 引擎去拿 new 樣板
 app.get('/todos/new',(req,res) =>{
 	return res.render('new')
+})
+
+//new
+app.post('/todos', (req, res) => {
+	const name = req.body.name // 從 req.body 拿出表單裡的 name 資料
+	//做法一 直接操作Todo
+	return Todo.create({ name })
+		.then(() => res.redirect('/'))
+		.catch(error => console.log(error))
+
+	//做法二 先產生物件實例，再把實例存入Todo
+	// const todo = new Todo({ name })  //從Todo產生一個實例
+	// return todo.save()   //將該實例存入資料庫
+	// 	.then(() => res.redirect('/'))
+	// 	.catch(error => console.log(error))
 })
 
 app.get('/todos/:id',(req,res) => {
@@ -54,15 +69,28 @@ app.get('/todos/:id',(req,res) => {
 		.catch(error => console.log(error))  //如果發生意外，執行錯誤處理
 })
 
-
-app.post('/todos',(req,res) => {
-	const name = req.body.name
-
-	const todo = new Todo({name})
-	return todo.save()
-		.then(() => redirect('/'))
-		.catch(error => console.log(erroe))
+app.get('/todos/:id/edit',(req,res) => {
+	const id = req.params.id  //用 req.params.id 把網址上的 id 截取出來
+	return Todo.findById(id)
+		.lean()
+		.then(todo => res.render('edit',{ todo }))
+		.catch(error => console.log(error))
 })
+
+app.post('/todos/:id/edit', (req, res) => {
+	const id = req.params.id
+	const name = req.body.name
+	return Todo.findById(id)
+		.then(todo => {
+			todo.name = name
+			return todo.save()
+		})
+		.then(() => res.redirect(`/todos/${id}`))
+		.catch(error => console.log(error))
+})
+
+
+
 
 app.listen(port,() =>{
 	console.log(`App is running on http://localhost:${port}`)

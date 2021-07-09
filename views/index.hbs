@@ -6,7 +6,8 @@
 	{{#each todos}}
 		<li>
 			{{this.name}}
-			<a href="./todos/{{ this._id}}">details</a>
+			<a href="./todos/{{ this._id}}">detail</a>
+			<a href="./todos/{{ this._id }}/edit">edit</a><!-- 加入這行 -->
 		</li>
 	{{/each}}
 </ul>
