@@ -1,7 +1,9 @@
 const express = require('express')
 const mongoose = require('mongoose') // 載入 mongoose
+
 const exphbs = require('express-handlebars') //引用express-handlebars，並命名為exphbs
 
+const bodyParser = require('body-parser')  //拉進body-parser
 
 const Todo = require('./models/todo')  // 載入 Todo model
 
@@ -29,6 +31,8 @@ app.engine('hbs',exphbs({
 //啟用樣版引擎hbs
 app.set('view engine','hbs')
 
+app.use(bodyParser.urlencoded({ extended:true}))
+
 
 app.get('/',(req,res) => {
 	//拿到全部的Todo資料
@@ -36,6 +40,19 @@ app.get('/',(req,res) => {
 		.lean()  // 把資料轉換成單純的JS物件
 		.then(todos => res.render('index', { todos }))  // 然後把資料送給前端樣板
 		.catch(error => console.error(error)) // 如果發生意外，執行錯誤處理
+})
+//叫 view 引擎去拿 new 樣板
+app.get('/todos/new',(req,res) =>{
+	return res.render('new')
+})
+
+app.post('/todos',(req,res) => {
+	const name = req.body.name
+
+	const todo = new Todo({name})
+	return todo.save()
+		.then(() => redirect('/'))
+		.catch(error => console.log(erroe))
 })
 
 app.listen(port,() =>{
