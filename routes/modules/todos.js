@@ -7,12 +7,12 @@ const router = express.Router()
 const Todo = require('../../models/todo')
 
 //new,叫 view 引擎去拿 new 樣板
-router.get('/todos/new',(req,res) =>{
+router.get('/new',(req,res) =>{
 	return res.render('new')
 })
 
 //new
-router.post('/todos', (req, res) => {
+router.post('/', (req, res) => {
 	const name = req.body.name // 從 req.body 拿出表單裡的 name 資料
 	//做法一 直接操作Todo
 	return Todo.create({ name })
@@ -26,7 +26,7 @@ router.post('/todos', (req, res) => {
 	// 	.catch(error => console.log(error))
 })
 
-router.get('/todos/:id',(req,res) => {
+router.get('/:id',(req,res) => {
 	const id = req.params.id
 	return Todo.findById(id) //從資料庫查找出資料
 		.lean()   //把資料轉換成單純的JS物件
@@ -34,7 +34,7 @@ router.get('/todos/:id',(req,res) => {
 		.catch(error => console.log(error))  //如果發生意外，執行錯誤處理
 })
 
-router.get('/todos/:id/edit',(req,res) => {
+router.get('/:id/edit',(req,res) => {
 	const id = req.params.id  //用 req.params.id 把網址上的 id 截取出來
 	return Todo.findById(id)
 		.lean()
@@ -42,7 +42,7 @@ router.get('/todos/:id/edit',(req,res) => {
 		.catch(error => console.log(error))
 })
 
-router.put('/todos/:id', (req, res) => {
+router.put('/:id', (req, res) => {
 	const id = req.params.id
 	//原本的寫法，甚麼鳥
 	// const name = req.body.name
@@ -64,7 +64,7 @@ router.put('/todos/:id', (req, res) => {
 		.catch(error => console.log(error))
 })
 
-router.delete('/todos/:id',(req, res) =>{
+router.delete('/:id',(req, res) =>{
 	const id = req.params.id  //透過 req.params.id 取得網址上的識別碼，用來查詢使用者想刪除的 To-do。
 	return Todo.findById(id)  //使用 Todo.findById 查詢資料，資料庫查詢成功以後，會把資料放進 todo
 		.then(todo => todo.remove()) //用 todo.remove() 刪除這筆資料
