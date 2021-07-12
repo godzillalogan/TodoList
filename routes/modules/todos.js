@@ -1,53 +1,18 @@
 const express = require('express')
-const mongoose = require('mongoose') // 載入 mongoose
-
-const exphbs = require('express-handlebars') //引用express-handlebars，並命名為exphbs
-
-const bodyParser = require('body-parser')  //拉進body-parser
-
-const methodOverride = require('method-override') //// 載入 method-override
-
-const routes = require('./routes') // 引用路由器
-
-const Todo = require('./models/todo')  // 載入 Todo model
-
-const app = express()
-const port = 3000
-
-mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology:true}) // 設定連線到 mongoDB
-
-const db = mongoose.connection
-
-db.on('error',()=>{
-	console.log('mongodb error')
-})
-
-db.once('open',() =>{
-	console.log('mongoDB connected')
-})
-//建立一個名為hbs的樣板引擎，並傳入exphbs與相關參數
-app.engine('hbs',exphbs({
-	defaultLayout:'main',
-	extname: '.hbs'  //是指定副檔名為.hbs，有了這行以後，我們才能把預設的長檔名改寫成短檔名。
-}))  
 
 
-//啟用樣版引擎hbs
-app.set('view engine','hbs')
+const router = express.Router()
 
-app.use(bodyParser.urlencoded({ extended:true}))
-app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
-app.use(routes)  // 將 request 導入路由器
-
-
+// 引用 Todo model
+const Todo = require('../../models/todo')
 
 //new,叫 view 引擎去拿 new 樣板
-app.get('/todos/new',(req,res) =>{
+router.get('/todos/new',(req,res) =>{
 	return res.render('new')
 })
 
 //new
-app.post('/todos', (req, res) => {
+router.post('/todos', (req, res) => {
 	const name = req.body.name // 從 req.body 拿出表單裡的 name 資料
 	//做法一 直接操作Todo
 	return Todo.create({ name })
@@ -61,7 +26,7 @@ app.post('/todos', (req, res) => {
 	// 	.catch(error => console.log(error))
 })
 
-app.get('/todos/:id',(req,res) => {
+router.get('/todos/:id',(req,res) => {
 	const id = req.params.id
 	return Todo.findById(id) //從資料庫查找出資料
 		.lean()   //把資料轉換成單純的JS物件
@@ -69,7 +34,7 @@ app.get('/todos/:id',(req,res) => {
 		.catch(error => console.log(error))  //如果發生意外，執行錯誤處理
 })
 
-app.get('/todos/:id/edit',(req,res) => {
+router.get('/todos/:id/edit',(req,res) => {
 	const id = req.params.id  //用 req.params.id 把網址上的 id 截取出來
 	return Todo.findById(id)
 		.lean()
@@ -77,7 +42,7 @@ app.get('/todos/:id/edit',(req,res) => {
 		.catch(error => console.log(error))
 })
 
-app.put('/todos/:id', (req, res) => {
+router.put('/todos/:id', (req, res) => {
 	const id = req.params.id
 	//原本的寫法，甚麼鳥
 	// const name = req.body.name
@@ -99,7 +64,7 @@ app.put('/todos/:id', (req, res) => {
 		.catch(error => console.log(error))
 })
 
-app.delete('/todos/:id',(req, res) =>{
+router.delete('/todos/:id',(req, res) =>{
 	const id = req.params.id  //透過 req.params.id 取得網址上的識別碼，用來查詢使用者想刪除的 To-do。
 	return Todo.findById(id)  //使用 Todo.findById 查詢資料，資料庫查詢成功以後，會把資料放進 todo
 		.then(todo => todo.remove()) //用 todo.remove() 刪除這筆資料
@@ -110,7 +75,5 @@ app.delete('/todos/:id',(req, res) =>{
 
 
 
-
-app.listen(port,() =>{
-	console.log(`App is running on http://localhost:${port}`)
-})
+// 匯出路由模組
+module.exports = router
