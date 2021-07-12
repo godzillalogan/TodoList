@@ -5,6 +5,8 @@ const exphbs = require('express-handlebars') //引用express-handlebars，並命
 
 const bodyParser = require('body-parser')  //拉進body-parser
 
+const methodOverride = require('method-override') //// 載入 method-override
+
 const Todo = require('./models/todo')  // 載入 Todo model
 
 const app = express()
@@ -32,7 +34,7 @@ app.engine('hbs',exphbs({
 app.set('view engine','hbs')
 
 app.use(bodyParser.urlencoded({ extended:true}))
-
+app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
 
 app.get('/',(req,res) => {
 	//拿到全部的Todo資料
@@ -78,7 +80,7 @@ app.get('/todos/:id/edit',(req,res) => {
 		.catch(error => console.log(error))
 })
 
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
 	const id = req.params.id
 	//原本的寫法，甚麼鳥
 	// const name = req.body.name
@@ -100,7 +102,7 @@ app.post('/todos/:id/edit', (req, res) => {
 		.catch(error => console.log(error))
 })
 
-app.post('/todos/:id/delete',(req, res) =>{
+app.delete('/todos/:id',(req, res) =>{
 	const id = req.params.id  //透過 req.params.id 取得網址上的識別碼，用來查詢使用者想刪除的 To-do。
 	return Todo.findById(id)  //使用 Todo.findById 查詢資料，資料庫查詢成功以後，會把資料放進 todo
 		.then(todo => todo.remove()) //用 todo.remove() 刪除這筆資料
