@@ -79,10 +79,20 @@ app.get('/todos/:id/edit',(req,res) => {
 
 app.post('/todos/:id/edit', (req, res) => {
 	const id = req.params.id
-	const name = req.body.name
+	//原本的寫法，甚麼鳥
+	// const name = req.body.name
+	// const isDone = req.body.isDone
+	const {name, isDone} = req.body   //解構賦值 (destructuring assignment),就是潮
 	return Todo.findById(id)
 		.then(todo => {
 			todo.name = name
+			//原本的寫法，甚麼鬼
+			// if(isDone === 'on'){
+			// 	todo.isDone === true
+			// }else{
+			// 	todo.isDone === False
+			// }
+		  todo.isDone = isDone === 'on'  //這樣寫才對，讚讚
 			return todo.save()
 		})
 		.then(() => res.redirect(`/todos/${id}`))
@@ -96,6 +106,9 @@ app.post('/todos/:id/delete',(req, res) =>{
 		.then(() => res.redirect('/')) //成功刪除以後，使用 redirect 重新呼叫首頁
 		.catch(error => console.log(error))
 })
+
+
+
 
 
 app.listen(port,() =>{
