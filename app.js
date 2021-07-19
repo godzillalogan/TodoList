@@ -5,7 +5,8 @@ const methodOverride = require('method-override') //// 載入 method-override
 
 const routes = require('./routes') // 引用路由器
 const app = express()
-const port = 3000
+// 如果在 Heroku 環境則使用 process.env.PORT， 否則為本地環境，使用 3000 
+const PORT = process.env.PORT || 3000
 
 require('./config/mongoose')
 
@@ -22,6 +23,6 @@ app.use(bodyParser.urlencoded({ extended:true}))
 app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
 app.use(routes)  // app.js要使用定義好的路由器
 
-app.listen(port,() =>{
-	console.log(`App is running on http://localhost:${port}`)
+app.listen(PORT,() =>{
+	console.log(`App is running on http://localhost:${PORT}`)
 })
