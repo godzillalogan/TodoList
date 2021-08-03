@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars') //引用express-handlebars，並命
 const bodyParser = require('body-parser')  //拉進body-parser
 const methodOverride = require('method-override') //// 載入 method-override
 const session = require('express-session')
+const usePassport = require('./config/passport')
 
 const routes = require('./routes') // 引用路由器
 const app = express()
@@ -29,6 +30,7 @@ app.use(session({
 
 app.use(bodyParser.urlencoded({ extended:true}))
 app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
+usePassport(app)
 app.use(routes)  // app.js要使用定義好的路由器
 
 app.listen(PORT,() =>{
