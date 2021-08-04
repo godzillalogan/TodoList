@@ -31,6 +31,15 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended:true}))
 app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
 usePassport(app)
+
+//設定本地變數 res.locals，放在usePassport(app) 之後、app.use(routes) 之前
+app.use(( req, res, next)=> {
+	console.log(req.user)
+	res.locals.isAuthenticated = req.isAuthenticated
+	res.locals.user = req.user
+	next()
+})
+
 app.use(routes)  // app.js要使用定義好的路由器
 
 app.listen(PORT,() =>{
