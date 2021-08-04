@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const schema = mongoose.Schema
+const Schema = mongoose.Schema
 
 const todoSchema = new mongoose.Schema({
   name:{
@@ -9,6 +9,12 @@ const todoSchema = new mongoose.Schema({
 	isDone:{
 		type:Boolean,
 		default: false
+	},
+	userId: {  // 加入關聯設定
+		type: Schema.Types.ObjectId,
+		ref: 'User',
+		index: true,
+		required: true
 	}
 })
 

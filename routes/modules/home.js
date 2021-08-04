@@ -7,8 +7,9 @@ const router = express.Router()
 const Todo = require('../../models/todo')
 
 router.get('/',(req,res) => {
+	const userId = req.user._id
 	//拿到全部的Todo資料
-	Todo.find() // 從資料庫查找出資料
+	Todo.find({userId}) // 從資料庫查找出資料
 		.lean()  // 把資料轉換成單純的JS物件
 		.sort({_id : 'asc'}) //「根據 _id 用升冪 (ascending) 排序
 		.then(todos => res.render('index', { todos }))  // 然後把資料送給前端樣板
