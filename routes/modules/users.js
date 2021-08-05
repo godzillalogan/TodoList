@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const passport = require('passport')
+const bcrypt = require('bcryptjs')
 const User = require('../../models/user')
 
 router.get('/login', (req, res) => {
@@ -39,32 +40,36 @@ router.post('/register', (req, res) => {
   // 檢查使用者是否已經註冊
   User.findOne({ email }).then(user => {
     if(user){
-      console.log('User already exists.')
-      res.render('register',{
+      error.push({ message: '這個 Email 已經註冊過了。' })
+      return res.render('register',{
+        errors,
         name,
         email,
         password,
         confirmPassword
       })
-    }else{
-      return User.create({
+    }
+
+    return bcrypt
+      .genSalt(10) // 產生「鹽」，並設定複雜度係數為 10
+      .then(salt => bcrypt.hash(password, salt))
+      .then(hash => User.create({
         name,
         email,
-        password
-      })
-        .then(() => res.redirect('/'))
-        .catch(err => console.log(err))
-      //第二種create的方式
-      // const bewUser = new User({
-      //   name,
-      //   email,
-      //   password
-      // })
-      // newUser
-      //   .save()
-      //   .then(() => res.redirect('/'))
-      //   .catch(err => console.log(err))
-    }
+        password : hash
+        }))
+      .then(() => res.redirect('/'))
+      .catch(err => console.log(err))
+    //第二種create的方式
+    // const bewUser = new User({
+    //   name,
+    //   email,
+    //   password
+    // })
+    // newUser
+    //   .save()
+    //   .then(() => res.redirect('/'))
+    //   .catch(err => console.log(err))
   })
 })
 
