@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars') //引用express-handlebars，並命
 const bodyParser = require('body-parser')  //拉進body-parser
 const methodOverride = require('method-override') //// 載入 method-override
 const session = require('express-session')
+const flash = require('connect-flash')
 const usePassport = require('./config/passport')
 
 const routes = require('./routes') // 引用路由器
@@ -27,7 +28,7 @@ app.use(session({
 	resave : false,
 	saveUninitialized : true
 }))
-
+app.use(flash())
 app.use(bodyParser.urlencoded({ extended:true}))
 app.use(methodOverride('_method'))  // 設定每一筆請求都會透過 methodOverride 進行前置處理
 usePassport(app)
@@ -37,6 +38,8 @@ app.use(( req, res, next)=> {
 	console.log(req.user)
 	res.locals.isAuthenticated = req.isAuthenticated
 	res.locals.user = req.user
+	res.locals.success_msg = req.flash('success_msg')  // 設定 success_msg 訊息
+  res.locals.warning_msg = req.flash('warning_msg')  // 設定 warning_msg 訊息
 	next()
 })
 

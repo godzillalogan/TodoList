@@ -2,6 +2,7 @@
   <div class="col-md-6 m-auto">
     <div class="card card-body">
       <h1 class="text-center mt-3">Register</h1>
+      {{> message}}
       <form action="/users/register" method="POST">
        <div class="form-group">
           <label for="name">Name</label>
@@ -19,7 +20,7 @@
           <label for="confirmPassword">Confirm Password</label>
           <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm Password" value="{{confirmPassword}}">
         </div>
-        <button type="submit" class="btn btn-primary btn-block">login</button>
+        <button type="submit" class="btn btn-primary btn-block">register</button>
       </form>
       <p class="lead mt-4">
         Have An Account?<a href="/users/login">Login</a>
