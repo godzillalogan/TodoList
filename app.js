@@ -4,12 +4,19 @@ const bodyParser = require('body-parser')  //拉進body-parser
 const methodOverride = require('method-override') //// 載入 method-override
 const session = require('express-session')
 const flash = require('connect-flash')
+
+if(process.env.NODE_ENV !== 'production'){
+	require('dotenv').config()
+}
+
+
+
 const usePassport = require('./config/passport')
 
 const routes = require('./routes') // 引用路由器
 const app = express()
 // 如果在 Heroku 環境則使用 process.env.PORT， 否則為本地環境，使用 3000 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 require('./config/mongoose')
 
@@ -24,7 +31,7 @@ app.set('view engine','hbs')
 
 
 app.use(session({
-	secret : 'This Is My Secret',
+	secret: process.env.SESSION_SECRECT,
 	resave : false,
 	saveUninitialized : true
 }))
